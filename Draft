@@ -1,0 +1,56 @@
+//Cada cuadradito es un bit
+//Array. Pasar a binario 58->111010
+//000
+//111 - 58 es la primera rotación de T
+//010 - donde cada bit es un cuadradito
+int [] T = {58, 154, 184, 178};
+// T tetromino properties
+color tColor = #FF007D;
+int tRotation;
+
+void setup() {
+  size(600, 600);
+}
+
+void draw() {
+  background(125);
+  drawT();
+}
+
+void drawT() {
+  push();
+  strokeWeight(5);
+  fill(tColor);
+
+  //Se encarga de pintar el cuadradito si se debe
+  for (int i = 0; i <= 8; i++) {
+    //1<<8-i in decimal 1 to 2^(8-1)
+    //value<<n value to shift n: number of places to shift
+    //Pregunta: por qué no poner i < 8 en el for en lugar de (1 << 8 - i) en el if
+    //Nota: No actuan igual...
+    if ( ( T[tRotation] & (1 << 8 - i) ) != 0) {
+      //& es bitwise and
+      //Compara bit por bit si son iguales->1 si son diferentes ->0
+
+      rect( (i % 3) * width / 3, ((i / 3) | 0) * height / 3, width / 3, height / 3);
+      //x-coordinate: (i % 3) * width / 3, Columna
+      //y-coordinate: ((i / 3) | 0) * height / 3, Fila
+      //width and height: width / 3, height / 3
+    }
+  }
+
+  pop();
+}
+
+void keyPressed() {
+  if (key == CODED) {
+    if (keyCode == UP) {
+      tRotation --;
+    } else if (keyCode == DOWN) {
+      tRotation ++;
+    }
+    tRotation = (tRotation < 0) ? 3 : tRotation % 4;
+    //  test ? expression1 : expression2
+    //if test==true then expression1 else expression2
+  }
+}
