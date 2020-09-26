@@ -1,6 +1,7 @@
 // Lo que hice fue que cuando se detectara que debajo de la ficha había otra ficha (o un cuadro de la ficha llego a y =1, o sea, el fondo del tablero), al presionar abajo o cuando se complete el tiempo, la ficha copiase su ubicación al tablero, de tal manera que se vea que está ahí. Luego de eso, se cambia el codigo de ls ficha y se reinician las coordenadas
 //Cada cuadradito es un bit
 //color,rotationValue,rotation1,...;
+int pos=2;
 int [] T = {#FF007D,2, 114, 610, 624, 562};
 int [] I = {#38FAEE,2, 240, 8738};
 int [] J = {#383CFA,2, 550, 1136, 802, 113};
@@ -23,7 +24,7 @@ void draw() {
   drawTetrominoe( Tetrominoes[n] );
 }
 
-void drawTetrominoe(int[] A) {
+void drawTetrominoe(int [] A) {
   B=A;
   push();
   strokeWeight(5);
@@ -54,12 +55,12 @@ void keyPressed() {
     println("B.length",B.length," Pos.rotación", B[1],
     "=", B[1] % (B.length-2));
 
-    //B[1] = (B[1] < 2) ? B.length-3 : B[1] % (B.length-2) +2;
-    if (B[1] < 2) B[1]=B.length-1 ;
-    else B[1]=(B[1]-2) % (B.length-2) +2;
+    //B[1] = (B[1] < pos) ? B.length-1-pos : B[1] % (B.length-pos) +pos;
+    if (B[1] < pos) B[1]=B.length-1 ;
+    else B[1]=(B[1]-pos) % (B.length-pos) +pos;
 
     println("B.length",B.length," Pos.rotación", B[1],
-    "=", B[1] % (B.length-2));
+    "=", B[1] % (B.length-pos));
     println("B[1] =", B[1]);
     println();
   }
