@@ -11,20 +11,24 @@ int [] Z = {#FF1F1F,2, 99, 612};
 int [] O = {#E60DFF,2, 51};
 int[] [] Tetrominoes= {T, I, J, L, S, Z, O};
 int [] B;
-int n = int(random(7));
 // T tetromino properties
+int tetro = int(random(7));
+int div= 8;//Número de divisiones
+int h=-2;//Altura
+int w=int(random(0,div-1));//Ubicación x
+int t=0;
 
 
 void setup() {
-  size(600, 600);
+  size(600, 750);
 }
 
 void draw() {
   background(125);
-  drawTetrominoe( Tetrominoes[n] );
+  drawTetrominoe( Tetrominoes[tetro] ,tetro);
 }
 
-void drawTetrominoe(int [] A) {
+void drawTetrominoe(int [] A, int a) {
   B=A;
   push();
   strokeWeight(5);
@@ -34,34 +38,36 @@ void drawTetrominoe(int [] A) {
     //value<<n value to shift n: number of places to shift
     if ( ( A[A[1]] & (1 << 15 - i) ) != 0) {
       //& Compara bit por bit: si son iguales->1 si son diferentes ->0
-      rect( (i % 4) * width / 4, ((i / 4) | 0) * height / 4, width / 4, height / 4);
+      rect( (i % 4)*width/div+w*width/div, (i/4+h)* width/div, width/div, width/div);
     }
   }
   pop();
+  if(millis()>600*t){
+    t++;
+    h++;
+  }if(h>div){
+    h=-2;
+    w=int(random(div-3));
+    tetro=int(random(7));
+    background(0);
+  }
 }
 
 void keyPressed() {
   if (key == CODED) {
     if (keyCode == UP) {
       B[1] ++;
-      println("B[1]++ =", B[1]);
     } else if (keyCode == DOWN) {
-      B[1] --;
-      println("B[1]-- =", B[1]);
+      //B[1] --;
+      h++;
     }
     else if (keyCode == RIGHT) {
-      n= int(random(7));
+      w++;
     }
-    println("B.length",B.length," Pos.rotación", B[1],
-    "=", B[1] % (B.length-2));
-
-    //B[1] = (B[1] < pos) ? B.length-1-pos : B[1] % (B.length-pos) +pos;
+    else if (keyCode == LEFT) {
+      w--;
+    }
     if (B[1] < pos) B[1]=B.length-1 ;
     else B[1]=(B[1]-pos) % (B.length-pos) +pos;
-
-    println("B.length",B.length," Pos.rotación", B[1],
-    "=", B[1] % (B.length-pos));
-    println("B[1] =", B[1]);
-    println();
   }
 }
