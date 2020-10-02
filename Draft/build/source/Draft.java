@@ -21,24 +21,22 @@ final int COLS=10;
 //Crea una matriz de ROWSxCOLS
 int [][] tableau = new int [ROWS][COLS];
 //Guarda la posición de la primera rotación en todos los tetrominos
-int pos=2;
+int pos=4;
 
 //Información de cada tetromino
-//Color, Posición de rotación+2, Rotación 0, Rotación 1...
-int [] T = {0xffFF007D,2, 114, 610, 624, 562};
-int [] I = {0xff38FAEE,2, 240, 8738};
-int [] J = {0xff383CFA,2, 550, 1136, 802, 113};
-int [] L = {0xffFFA939,2, 547, 116, 1570, 368};
-int [] S = {0xff70FF39,2, 54, 561};
-int [] Z = {0xffFF1F1F,2, 99, 612};
-int [] O = {0xffE60DFF,2, 51};
+//Color, posX, posY, Posición de rotación+2, Rotación 0, Rotación 1...
+int [] T = {0xffFF007D, 0,-2, 2, 114, 610, 624, 562};
+int [] I = {0xff38FAEE, 0,-2, 2, 240, 8738};
+int [] J = {0xff383CFA, 0,-2, 2, 550, 1136, 802, 113};
+int [] L = {0xffFFA939, 0,-2, 2, 547, 116, 1570, 368};
+int [] S = {0xff70FF39, 0,-2, 2, 54, 561};
+int [] Z = {0xffFF1F1F, 0,-2, 2, 99, 612};
+int [] O = {0xffE60DFF, 0,-2, 2, 51};
 
 //Lista con todos los tetrominos
 int[] [] Tetrominoes= {T, I, J, L, S, Z, O};
 int tetro = PApplet.parseInt(random(7));
-int h=-2;//Altura
-int w=PApplet.parseInt(random(0,ROWS-1));//Ubicación x
-int t=0;
+int t=0;//Lleva cuenta del tiempo
 
 
 public void setup() {
@@ -47,28 +45,31 @@ public void setup() {
 
 public void draw() {
   background(125);
-  drawTetrominoe(Tetrominoes[tetro]);
+  drawTetrominoe();
 }
 
-public void drawTetrominoe(int [] A) {
+public void drawTetrominoe() {
   push();
   strokeWeight(5);
-  fill(A[0]);
+  fill(Tetrominoes[tetro][0]);
   //Se encarga de pintar el cuadradito si se debe
   for (int i = 0; i <= 15; i++) {
     //value<<n value to shift n: number of places to shift
-    if ( ( A[A[1]] & (1 << 15 - i) ) != 0) {
+    if ( ( Tetrominoes[tetro][Tetrominoes[tetro][pos-1]] & (1 << 15 - i) ) != 0) {
       //& Compara bit por bit: si son iguales->1 si son diferentes ->0
-      rect( (i % 4)*width/ROWS+w*width/ROWS, (i/4+h)* width/ROWS, width/ROWS, width/ROWS);
+      rect( (i % 4)*width/ROWS+Tetrominoes[tetro][1]*width/ROWS,
+            (i/4+Tetrominoes[tetro][2])* width/ROWS,
+            width/ROWS,
+            width/ROWS);
     }
   }
   pop();
   if(millis()>600*t){
     t++;
-    h++;
-  }if(h>ROWS){
-    h=-2;
-    w=PApplet.parseInt(random(ROWS-3));
+    Tetrominoes[tetro][2]++;
+  }if(Tetrominoes[tetro][2]>ROWS){
+    Tetrominoes[tetro][2]=-2;
+    Tetrominoes[tetro][1]=PApplet.parseInt(random(ROWS-3));
     tetro=PApplet.parseInt(random(7));
     background(0);
   }
@@ -77,19 +78,19 @@ public void drawTetrominoe(int [] A) {
 public void keyPressed() {
   if (key == CODED) {
     if (keyCode == UP) {
-      Tetrominoes[tetro][1]++;
+      Tetrominoes[tetro][pos-1]--;
     } else if (keyCode == DOWN) {
-      h++;
+      Tetrominoes[tetro][2]++;
     }else if (keyCode == RIGHT) {
-      w++;
+      Tetrominoes[tetro][1]++;
     }else if (keyCode == LEFT) {
-      w--;
+      Tetrominoes[tetro][1]--;
     }
-    if (Tetrominoes[tetro][1] < pos) {
-      Tetrominoes[tetro][1]=Tetrominoes[tetro].length-1 ;
+    if (Tetrominoes[tetro][pos-1] < pos) {
+      Tetrominoes[tetro][pos-1]=Tetrominoes[tetro].length-1 ;
     }
     else {
-      Tetrominoes[tetro][1]=(Tetrominoes[tetro][1]-pos) % (Tetrominoes[tetro].length-pos) +pos;
+      Tetrominoes[tetro][pos-1]=(Tetrominoes[tetro][pos-1]-pos) % (Tetrominoes[tetro].length-pos) +pos;
     }
   }
 }
