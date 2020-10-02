@@ -1,3 +1,19 @@
+import processing.core.*; 
+import processing.data.*; 
+import processing.event.*; 
+import processing.opengl.*; 
+
+import java.util.HashMap; 
+import java.util.ArrayList; 
+import java.io.File; 
+import java.io.BufferedReader; 
+import java.io.PrintWriter; 
+import java.io.InputStream; 
+import java.io.OutputStream; 
+import java.io.IOException; 
+
+public class Draft extends PApplet {
+
 //Número de filas y columnas
 final int ROWS=20;
 final int COLS=10;
@@ -9,32 +25,32 @@ int pos=2;
 
 //Información de cada tetromino
 //Color, Posición de rotación+2, Rotación 0, Rotación 1...
-int [] T = {#FF007D,2, 114, 610, 624, 562};
-int [] I = {#38FAEE,2, 240, 8738};
-int [] J = {#383CFA,2, 550, 1136, 802, 113};
-int [] L = {#FFA939,2, 547, 116, 1570, 368};
-int [] S = {#70FF39,2, 54, 561};
-int [] Z = {#FF1F1F,2, 99, 612};
-int [] O = {#E60DFF,2, 51};
+int [] T = {0xffFF007D,2, 114, 610, 624, 562};
+int [] I = {0xff38FAEE,2, 240, 8738};
+int [] J = {0xff383CFA,2, 550, 1136, 802, 113};
+int [] L = {0xffFFA939,2, 547, 116, 1570, 368};
+int [] S = {0xff70FF39,2, 54, 561};
+int [] Z = {0xffFF1F1F,2, 99, 612};
+int [] O = {0xffE60DFF,2, 51};
 
 //Lista con todos los tetrominos
 int[] [] Tetrominoes= {T, I, J, L, S, Z, O};
-int tetro = int(random(7));
+int tetro = PApplet.parseInt(random(7));
 int h=-2;//Altura
-int w=int(random(0,ROWS-1));//Ubicación x
+int w=PApplet.parseInt(random(0,ROWS-1));//Ubicación x
 int t=0;
 
 
-void setup() {
-  size(600, 750);
+public void setup() {
+  
 }
 
-void draw() {
+public void draw() {
   background(125);
   drawTetrominoe(Tetrominoes[tetro]);
 }
 
-void drawTetrominoe(int [] A) {
+public void drawTetrominoe(int [] A) {
   push();
   strokeWeight(5);
   fill(A[0]);
@@ -52,13 +68,13 @@ void drawTetrominoe(int [] A) {
     h++;
   }if(h>ROWS){
     h=-2;
-    w=int(random(ROWS-3));
-    tetro=int(random(7));
+    w=PApplet.parseInt(random(ROWS-3));
+    tetro=PApplet.parseInt(random(7));
     background(0);
   }
 }
 
-void keyPressed() {
+public void keyPressed() {
   if (key == CODED) {
     if (keyCode == UP) {
       Tetrominoes[tetro][1]++;
@@ -74,6 +90,16 @@ void keyPressed() {
     }
     else {
       Tetrominoes[tetro][1]=(Tetrominoes[tetro][1]-pos) % (Tetrominoes[tetro].length-pos) +pos;
+    }
+  }
+}
+  public void settings() {  size(600, 750); }
+  static public void main(String[] passedArgs) {
+    String[] appletArgs = new String[] { "Draft" };
+    if (passedArgs != null) {
+      PApplet.main(concat(appletArgs, passedArgs));
+    } else {
+      PApplet.main(appletArgs);
     }
   }
 }
