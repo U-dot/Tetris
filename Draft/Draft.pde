@@ -25,7 +25,7 @@ int t=0;//Lleva cuenta del tiempo
 
 void setup() {
   size(600, 750);
-  print(tableau);
+  print(Tetrominoes);
 }
 
 void draw() {
@@ -73,16 +73,18 @@ void keyPressed() {
     }
     if (Tetrominoes[tetro][pos-1] < pos) {
       Tetrominoes[tetro][pos-1]=Tetrominoes[tetro].length-1 ;
+    }if(Tetrominoes[tetro][1]<-3){
+      Tetrominoes[tetro][1]=ROWS-1;
+    }else if(ROWS-1<Tetrominoes[tetro][1]){
+      Tetrominoes[tetro][1]=-3;
     }
-    else {
-      Tetrominoes[tetro][pos-1]=(Tetrominoes[tetro][pos-1]-pos) % (Tetrominoes[tetro].length-pos) +pos;
-    }
+
   }
 }
-//Función o procedimiento
+//Función imprimir matriz
 void print(int matrix [][]){
-  int rows = matrix.length;
-  for (int i=0;i<matrix.length;i++){
+  for (int i=0; i<matrix.length; i++){
+    print("row i");
     println(matrix[i]);
   }
 }
