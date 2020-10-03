@@ -15,10 +15,9 @@ import java.io.IOException;
 public class Draft extends PApplet {
 
 
-
 //Número de filas y columnas
-final int ROWS=3;
-final int COLS=4;
+final int ROWS=10;
+final int COLS=15;
 
 //Crea una matriz de ROWSxCOLS,valores se incializan en 0
 int [][] tableau = new int [ROWS][COLS];
@@ -36,23 +35,24 @@ int [] Z = {0xffFF1F1F, 0,-2, 4, 99, 612};
 int [] O = {0xffE60DFF, 0,-2, 4, 51};
 
 //Lista con todos los tetrominos
-int[] [] Tetrominoes= {T, I, J, L, S, Z, O};
-int tetro = PApplet.parseInt(random(7));
-int t=0;//Lleva cuenta del tiempo
+int[] [] Tetrominoes= {time, I, J, L, S, Z, O};
+int numTetro=0;//Lleva la cuenta de cuántos tetrominos hay en el tablero menos 1
+int []letraTetroList=new int[ROWS*COLS/4];//Guarda los Tetros que han aparecido
+int letraTetro= PApplet.parseInt(random(7));//Guarda el tetro actual(en movimiento)
+int time=0;//Lleva cuenta del tiempo
 
 
 public void setup() {
   
-  randomFill(tableau);
-  print(tableau);
-  removeRow(0,tableau);
-  print(tableau);
-
+  letraTetroList[0]=letraTetro;
 }
 
 public void draw() {
   background(125);
-  //drawTetrominoe(Tetrominoes[tetro]);
+  for(int i=0;i<numTetro;i++){
+    drawTetrominoe(Tetrominoes[letraTetroList[i]]);
+  }
+  fallTetrominoe(Tetrominoes[letraTetro]);
 }
 
 public void drawTetrominoe(int[] A) {
@@ -71,38 +71,41 @@ public void drawTetrominoe(int[] A) {
     }
   }
   pop();
-  if(millis()>600*t){
-    t++;
-    A[2]++;
-  }if(A[2]>ROWS){
-    A[2]=-2;
-    A[1]=PApplet.parseInt(random(ROWS-3));
-    tetro=PApplet.parseInt(random(7));
-    background(0);
+}
+public void fallTetrominoe(int[] A) {
+  if(millis()>600*time){//Si pasan 600 milisegundos
+    time++;
+    A[2]++;//Modifica altura
+  }if(A[2]>COLS){//Si la altura está por fuera del tablero
+    A[2]--;//Revierte la altura
+    numTetro++;//Baja un nuevo tetromino
+    letraTetroList[numTetro]=letraTetro;
+    letraTetro=PApplet.parseInt(random(7));
   }
 }
 
 public void keyPressed() {
   if (key == CODED) {
     if (keyCode == UP) {
-      Tetrominoes[tetro][pos-1]--;
+      Tetrominoes[letraTetro][pos-1]--;
     } else if (keyCode == DOWN) {
-      Tetrominoes[tetro][2]++;
+      Tetrominoes[letraTetro][2]++;
     }else if (keyCode == RIGHT) {
-      Tetrominoes[tetro][1]++;
+      Tetrominoes[letraTetro][1]++;
     }else if (keyCode == LEFT) {
-      Tetrominoes[tetro][1]--;
+      Tetrominoes[letraTetro][1]--;
     }
-    if (Tetrominoes[tetro][pos-1] < pos) {
-      Tetrominoes[tetro][pos-1]=Tetrominoes[tetro].length-1 ;
-    }if(Tetrominoes[tetro][1]<-3){
-      Tetrominoes[tetro][1]=ROWS-1;
-    }else if(ROWS-1<Tetrominoes[tetro][1]){
-      Tetrominoes[tetro][1]=-3;
+    if (Tetrominoes[letraTetro][pos-1] < pos) {
+      Tetrominoes[letraTetro][pos-1]=Tetrominoes[letraTetro].length-1 ;
+    }if(Tetrominoes[letraTetro][1]<-3){
+      Tetrominoes[letraTetro][1]=ROWS-1;
+    }else if(ROWS-1<Tetrominoes[letraTetro][1]){
+      Tetrominoes[letraTetro][1]=-3;
     }
 
   }
 }
+
 //Función imprimir matriz
 public void print(int matrix [][]){
   for (int i=0; i<matrix.length; i++){
@@ -129,6 +132,7 @@ public int[][]removeRow(int delRow,int matrix[][]){
   //  }
   //  counter++;
   //}
+  //No devuelve la matriz que es
   print (matrix1);
   return matrix1;
 }
