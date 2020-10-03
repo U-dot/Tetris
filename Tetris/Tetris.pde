@@ -1,6 +1,14 @@
+//Ser general
+//Comentar, código +-
+//no trabajar bit a bit sino con entero por Java
+//Si se trabaja bit a bit se devuelve entero y no [][] en funciones
+//
+//para colisión comparar bit a bit.
+
+
 //Número de filas y columnas
-final int ROWS=10;
-final int COLS=15;
+final int ROWS=5;
+final int COLS=6;
 
 //Crea una matriz de ROWSxCOLS,valores se incializan en 0
 int [][] tableau = new int [ROWS][COLS];
@@ -28,14 +36,22 @@ int time=0;//Lleva cuenta del tiempo
 void setup() {
   size(600, 750);
   letraTetroList[0]=letraTetro;
+  int counter =0;
+  for(int i=0;i<ROWS;i++){
+    for(int j=0;j<COLS;j++){
+      tableau[i][j]=1;
+    }
+  }
+  tableau = removeRow(2,tableau);
+  print(submatrix(tableau,3,4,4,6));
 }
 
 void draw() {
   background(125);
-  for(int i=0;i<=numTetro;i++){
-    drawTetrominoe(Tetrominoes[letraTetroList[i]]);
-    fallTetrominoe(Tetrominoes[letraTetro]);
-  }
+  //for(int i=0;i<=numTetro;i++){
+  //  drawTetrominoe(Tetrominoes[letraTetroList[i]]);
+  //  fallTetrominoe(Tetrominoes[letraTetro]);
+  //}
 }
 
 void drawTetrominoe(int[] A) {
@@ -59,7 +75,7 @@ void fallTetrominoe(int[] A) {
   if(millis()>600*time){//Si pasan 600 milisegundos
     time++;
     A[2]++;//Modifica altura
-  }if(A[2]>10){//Si la altura está por fuera del tablero
+  }if(A[2]>COLS-4){//Si la altura está por fuera del tablero
     A[2]--;//Revierte la altura
     numTetro++;//Baja un nuevo tetromino
     letraTetro=int(random(7));
@@ -96,6 +112,44 @@ void print(int matrix [][]){
     println(matrix[i]);
   }
 }
+
+//verificar colisión
+int [][] submatrix(int [][]matrix,int row, int col,
+                    int n_rows, int n_cols){
+  int rows = matrix.length;
+  int cols = matrix[0].length;
+  //if (row<0||row>matrix.length
+  //    ){
+  //  throw new Error("removeRow out of bounds");
+  //}
+  //Inicializamos la submatriz en 1s por si está fuera del tablero
+  int [][] _matrix=new int[n_rows][n_cols];
+  for (int i=0; i<n_rows;i++){
+    if(row==i && i+1<n_rows){i++;}
+    for(int j=0;j<n_cols;j++){
+      _matrix[i][j]=1;
+    }
+  }
+  int counteri=0;
+  int counterj=0;
+  for (int i=0; i<rows;i++){
+    if( i>=row && counteri<n_rows){
+      counterj=0;
+      for(int j=0; j<cols;j++){
+        if (j>=col&& counterj < n_cols){
+          _matrix[counteri][counterj]=matrix[i][j];
+          counterj++;
+        }
+      }
+      counteri++;
+    }
+  }
+  return _matrix;
+}
+
+
+
+
 
 //Para matrices rectangulares
 //Remover fila y devolver matriz modificada
