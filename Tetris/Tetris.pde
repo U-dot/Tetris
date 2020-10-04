@@ -1,3 +1,4 @@
+import java.util.Arrays;
 //para colisión comparar bit a bit.
 
 //Número de filas y columnas tal que (ROWS+1)(COLS+2)<32
@@ -32,7 +33,7 @@ int time=0;//Lleva cuenta del tiempo
 
 void setup() {
   size(600, 600);
-  //frameRate(0.5);
+  //frameRate(4);
   tablero= resetTablero(binary(tablero),ROWS,COLS);
   printBitwise(binary(tablero),ROWS+1,COLS+2);
   letraTetroList[0]=letraTetro;
@@ -46,35 +47,46 @@ void draw() {
   }
 }
 
-boolean collision(int[] A){
-  print(binary(tablero),"\n",binary(A[A[pos-1]]),"\n");
-
+void newTablero(int[] A){
+  printBitwise(binary(tablero),ROWS+1,COLS+2);
+  //Cambiar tablero con los nuevos valores
+  char [] bTablero= binary(tablero).toCharArray();
+  print("h",bTablero[0]);
   //tablero ROWS+1 x COLS+2
   int row=0, col=0, posTablero;
   //Matriz=tablero. A=Tetromino posición original
-  print("\n collision \n");
   for (int i = 0; i < 16; i++) {
     col=i%4;
     row=(i-col)/4;
-
-    if (row+A[2]<0){continue;}//Pos y A[2] Pos x A[1]
-    print("\n row =", row," col =", col);
+    if (row+A[2]<0){continue;}
     posTablero=(A[2]+row)*(COLS+2)+col+1;
-    //print(" posTablero =", posTablero);
-    //print( binary(tablero), binary(1<< (ROWS+1)*(COLS+2) - posTablero),
-            //tablero, 1<< (ROWS+1)*(COLS+2)-1 - posTablero, posTablero);
     if (( A[A[pos-1]] & (1 << 15 - i)) != 0) {
-      if ( ( tablero  & (1<< (ROWS+1)*(COLS+2)-1 - posTablero))  != 0){
-        print(" :3");
-        return false;
-      }
-      //print("\n tablero << (ROWS+1)*(COLS+2)-1 - posTablero :",
-      //tablero << (ROWS+1)*(COLS+2)-1 - posTablero);
+      bTablero[posTablero]='1';
     }
   }
-  print("\n A[1] =",A[1],"\n \n");
+  print("a");
+  tablero = unbinary(new String(bTablero));
+  printBitwise(binary(tablero),ROWS+1,COLS+2);
+}
+
+boolean collision(int[] A){
+  //tablero ROWS+1 x COLS+2
+  int row=0, col=0, posTablero;
+  //Matriz=tablero. A=Tetromino posición original
+  for (int i = 0; i < 16; i++) {
+    col=i%4;
+    row=(i-col)/4;
+    if (row+A[2]<0){continue;}//Pos y A[2] Pos x A[1]
+    posTablero=(A[2]+row)*(COLS+2)+col+1;
+    if (( A[A[pos-1]] & (1 << 15 - i)) != 0) {
+      if ( ( tablero  & (1<< (ROWS+1)*(COLS+2)-1 - posTablero))  != 0){
+        return false;
+      }
+    }
+  }
   return true;
 }
+
 
 
 void fallTetrominoe(int[] A) {
@@ -83,6 +95,7 @@ void fallTetrominoe(int[] A) {
     A[2]++;//Modifica altura
   }else if(collision(A)==false){
     A[2]--;
+    newTablero(A);
     numTetro++;//Baja un nuevo tetromino
     letraTetro=int(random(7));
     if (numTetro>=letraTetroList.length){
@@ -138,7 +151,6 @@ void drawTetrominoe(int[] A) {
     fill(A[0]);
   }
   pop();
-  print("\n A[1] =",A[1],"\n");
 }
 
 void keyPressed() {
