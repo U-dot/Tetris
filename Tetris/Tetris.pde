@@ -82,6 +82,7 @@ void fallTetrominoe(int[] A) {
     time++;
     A[2]++;//Modifica altura
   }else if(collision(A)==false){
+    A[2]--;
     numTetro++;//Baja un nuevo tetromino
     letraTetro=int(random(7));
     if (numTetro>=letraTetroList.length){
