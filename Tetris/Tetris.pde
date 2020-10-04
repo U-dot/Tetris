@@ -1,17 +1,11 @@
-//Ser general
-//Comentar, código +-
-//no trabajar bit a bit sino con entero por Java
-//Si se trabaja bit a bit se devuelve entero y no [][] en funciones
-//
 //para colisión comparar bit a bit.
 
-
 //Número de filas y columnas
-final int ROWS=5;
-final int COLS=6;
+final int ROWS=3;
+final int COLS=4;
 
-//Crea una matriz de ROWSxCOLS,valores se incializan en 0
-int [][] tableau = new int [ROWS][COLS];
+//Crea una entero bitwise para representar el tableau
+int tableau=0;
 //Guarda la posición de la primera rotación en todos los tetrominos
 int pos=4;
 
@@ -27,7 +21,7 @@ int [] O = {#E60DFF, 0,-2, 4, 51};
 
 //Lista con todos los tetrominos
 int[] [] Tetrominoes= {T, I, J, L, S, Z, O};
-int numTetro=0;//Lleva la cuenta de cuántos tetrominos hay en el tablero menos 1
+int numTetro=0;//Lleva la cuenta de cuántos tetrominos hay en el tableau menos 1
 int []letraTetroList=new int[ROWS*COLS/4];//Guarda los Tetros que han aparecido
 int letraTetro= int(random(7));//Guarda el tetro actual(en movimiento)
 int time=0;//Lleva cuenta del tiempo
@@ -35,24 +29,57 @@ int time=0;//Lleva cuenta del tiempo
 
 void setup() {
   size(600, 750);
-  letraTetroList[0]=letraTetro;
 
+  tableau= resetTableau(binary(tableau),ROWS,COLS);
+  printBitwise(binary(tableau),ROWS+1,COLS+2);
+  //print(binary(tableau),"\n");
+  //letraTetroList[0]=letraTetro;
 }
 
 void draw() {
   background(125);
-  for(int i=0;i<=numTetro;i++){
-    drawTetrominoe(Tetrominoes[letraTetroList[i]]);
-    fallTetrominoe(Tetrominoes[letraTetro]);
-  }
+  //noLoop();
+  //for(int i=0;i<=numTetro;i++){
+  //  drawTetrominoe(Tetrominoes[letraTetroList[i]]);
+  //  fallTetrominoe(Tetrominoes[letraTetro]);
+  //}
 }
+
+int resetTableau(String tablero, int rows,int cols){
+  for (int i=0;i<rows;i++){
+    tablero= tablero+"1";
+    for (int j=0;j<cols;j++){
+      tablero= tablero+"0";
+    }
+    tablero= tablero+"1";
+  }
+  for (int j=0;j<cols+2;j++){
+    tablero= tablero+"1";
+  }
+  return unbinary(tablero);
+}
+
+void printBitwise(String integer,int rows,int cols){
+  print(integer,"\n");
+  for (int i=integer.length()-rows*cols;i<integer.length();i++){
+    //print(" ",i," ");
+    print(integer.charAt(i));
+    if((i-integer.length()+1)%cols==0){
+      print(" \n");
+    }
+  }
+  print("\n hola \n");
+}
+
+
+
 
 void drawTetrominoe(int[] A) {
   push();
   strokeWeight(5);
   fill(A[0]);
   //Se encarga de pintar el cuadradito si se debe
-  for (int i = 0; i <= 15; i++) {
+  for (int i = 0; i < 16; i++) {
     //value<<n value to shift n: number of places to shift
     if ( ( A[A[pos-1]] & (1 << 15 - i) ) != 0) {
       //& Compara bit por bit: si son iguales->1 si son diferentes ->0
@@ -68,7 +95,7 @@ void fallTetrominoe(int[] A) {
   if(millis()>600*time){//Si pasan 600 milisegundos
     time++;
     A[2]++;//Modifica altura
-  }if(A[2]>COLS-4){//Si la altura está por fuera del tablero
+  }if(A[2]>COLS-4){//Si la altura está por fuera del tableau
     A[2]--;//Revierte la altura
     numTetro++;//Baja un nuevo tetromino
     letraTetro=int(random(7));
