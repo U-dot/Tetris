@@ -1,4 +1,8 @@
+/*
+Borrador de juego de Tetris en Bitwise y programación estructurada, leer READ.ME
+*/
 import java.util.Arrays;
+
 //Número de filas y columnas tal que (ROWS+1)(COLS+2)<32
 final int ROWS=4;
 final int COLS=4;
@@ -26,7 +30,7 @@ void setup() {
   size(600, 600);
   tablero= resetTablero();//resetea el tablero
   printBitwise(binary(tablero),ROWS+1,COLS+2);//Imprime el tablero
-  letraTetroList[0]=letraTetro;//Empieza con el primer tetromino
+  letraTetroList[0]=letraTetro;//Empieza con un primer tetromino
 }
 
 void draw() {
@@ -59,7 +63,7 @@ void fallTetrominoe(int[] A) {//Revisa si el tetromino A puede bajar una fila
     //Si pasan 1500 milisegundos y sí va a habler colisión
   }else if(millis()>1500*time &&collision(A,0,1)==false){//No modifica altura
     newTablero(A);//Incluye la ubicación del tetromino en el tablero
-    numTetro++;//Se usa un nuevo tetromino
+    numTetro++;//Aumenta el número de tetrominos
     letraTetro=int(random(7));//Escoge el nuevo tetromino
     if (numTetro>=letraTetroList.length){//Si no pueden haber más tetrominos
       numTetro=0;//empieza de nuevo
@@ -69,6 +73,26 @@ void fallTetrominoe(int[] A) {//Revisa si el tetromino A puede bajar una fila
     letraTetroList[numTetro]=letraTetro; //Anota el nuevo tetromino
   }
 }
+
+boolean collision(int[] A, int movX,int movY){
+  //Calcula colisión con el tablero si A se mueve mov X en el eje x o movY en el eje y.
+  //Variables para calcular la posiciónque debe llevar cada bit de A en el tablero
+  int row=0, col=0, posTablero;
+  for (int i = 0; i < 16; i++) {
+    col=i%ROWS;//Calcula posX o columna del bit en el tablero
+    row=(i-col)/ROWS;//Calcula posY o fila del bit en el tablero
+    if (row+A[2]+movY<0){continue;}//Si el bit está por encima del tablero, se ignora
+    posTablero=(A[2]+movY+row)*(COLS+2)+col+A[1]+movX+1;
+    //Si algunos de los bits correspondientes de A y el del tablero son 1
+    if (( A[A[pos-1]] & (1 << 15 - i)) != 0) {
+      if ( ( tablero  & (1<< (ROWS+1)*(COLS+2)-1 - posTablero))  != 0){
+        return false;//Va a haber colisión
+      }
+    }
+  }
+  return true;// Si no, no va a haber colisión
+}
+
 void newTablero(int[] A){//Incluye la ubicación del tetromino A en el tablero
   print(binary(tablero),"\n",binary(A[A[pos-1]]),"\n");//Imprime el tablero sin cambios
   char [] bTablero= binary(tablero).toCharArray();//Crea una lista de caracteres con los datos del tablero
@@ -76,8 +100,8 @@ void newTablero(int[] A){//Incluye la ubicación del tetromino A en el tablero
   int row=0, col=0, posTablero;
   for (int i = 0; i < 16; i++) {
     col=i%ROWS;//Calcula posX o columna del bit en el tablero
-    row=(i-col)/ROWS;//Calcula posY o columna del bit en el tablero
-    if (row+A[2]<0){continue;}//Si el bit todavía no aparece, i
+    row=(i-col)/ROWS;//Calcula posY o fila del bit en el tablero
+    if (row+A[2]<0){continue;}//Si el bit está por encima del tablero, se ignora
     posTablero=(A[2]+row)*(COLS+2)+col+3+A[1];//Calcula posición del bit de A en el tablero
     if (( A[A[pos-1]] & (1 << 15 - i)) != 0) {//Modifica el bit en el tablero si el bit de A es 1
       bTablero[posTablero]='1';
@@ -87,62 +111,44 @@ void newTablero(int[] A){//Incluye la ubicación del tetromino A en el tablero
   printBitwise(binary(tablero),ROWS+1,COLS+2);//Imprime el nuevo tablero
 }
 
-boolean collision(int[] A, int movX,int movY){
-  //Calcula colisión con el tablero si A se mueve mov X en el eje x o movY en el eje y.
-  //Variables para calcular la posiciónque debe llevar cada bit de A en el tablero
-  int row=0, col=0, posTablero;
-  for (int i = 0; i < 16; i++) {
-    col=i%ROWS;
-    row=(i-col)/ROWS;
-    if (row+A[2]+movY<0){continue;}//Pos y A[2]+movY Pos x A[1]+movX
-    posTablero=(A[2]+movY+row)*(COLS+2)+col+A[1]+movX+1;
-    if (( A[A[pos-1]] & (1 << 15 - i)) != 0) {
-      if ( ( tablero  & (1<< (ROWS+1)*(COLS+2)-1 - posTablero))  != 0){
-        return false;
-      }
-    }
-  }
-  return true;
-}
 int resetTablero(){
-  String aTablero= binary(tablero);
+  //Resetea el tablero  a 0s en el centro y 1s en los límites izq, der, inf.
+  String aTablero= binary(tablero);//Inicializa una string para guardar el tablero
   for (int i=0;i<ROWS;i++){
-    aTablero= aTablero+"1";
+    aTablero= aTablero+"1";// extremo izquierdo
     for (int j=0;j<COLS;j++){
-      aTablero= aTablero+"0";
+      aTablero= aTablero+"0";//centro
     }
-    aTablero= aTablero+"1";
+    aTablero= aTablero+"1";// extremo derecho
   }
   for (int j=0;j<COLS+2;j++){
-    aTablero= aTablero+"1";
+    aTablero= aTablero+"1";//extremo inferior
   }
-  return unbinary(aTablero);
+  return unbinary(aTablero);//devuelve el valor decimal de la string binaria
 }
-
+//Imprime una "matriz" o tablero del colsxrows
 void printBitwise(String integer,int rows,int cols){
-  print("print Bitwise:",integer,"\n");
+  print("print Bitwise:",integer,"\n");//Imprime el número binario completo
   for (int i=integer.length()-rows*cols;i<integer.length();i++){
-    print(integer.charAt(i));
-    if((i-integer.length()+1)%cols==0){
-    }
+    print(integer.charAt(i));//Imprime caracter por caracter organizados en filas y columnas
   }
 }
-void keyPressed() {
+void keyPressed() {//Si se oprime una tecla
   if (key == CODED) {
-    if (keyCode == UP) {
-      Tetrominoes[letraTetro][pos-1]--;
-    } else if (keyCode == DOWN) {
-      Tetrominoes[letraTetro][2]++;
-    }else if (keyCode == RIGHT) {
+    if (keyCode == UP) {//Si la tecla es la flecha superior
+      Tetrominoes[letraTetro][pos-1]--;//Cambiar rotación del tetromino
+    } else if (keyCode == DOWN) {//Si la flecha es la flecha inferior
+      Tetrominoes[letraTetro][2]++;//Bajar el tetromino
+    }else if (keyCode == RIGHT) {//Si la flecha es la flecha a la derecha
       int a = collision(Tetrominoes[letraTetro],1,0)==false? 0:1;
-      Tetrominoes[letraTetro][1]+=a;
-    }else if (keyCode == LEFT) {
+      Tetrominoes[letraTetro][1]+=a;//Aumentar posX solo si no va a haber colisión
+    }else if (keyCode == LEFT) {//Si la flecha es la flecha a la izquierda
       int b = collision(Tetrominoes[letraTetro],-1,0)==false? 0:-1;
-      Tetrominoes[letraTetro][1]+=b;
-    }else if (keyCode == SHIFT){noLoop();
-    }else if (keyCode == CONTROL){loop();}
-    if (Tetrominoes[letraTetro][pos-1] < pos) {
-      Tetrominoes[letraTetro][pos-1]=Tetrominoes[letraTetro].length-1 ;
+      Tetrominoes[letraTetro][1]+=b;//Disminuir posX solo si no va a haber colisión
+    }else if (keyCode == SHIFT){noLoop();//Parar si se oprime shift
+    }else if (keyCode == CONTROL){loop();}//Continuar si se oprime control
+    if (Tetrominoes[letraTetro][pos-1] < pos) {//Si la rotación dada está fuera de rango
+      Tetrominoes[letraTetro][pos-1]=Tetrominoes[letraTetro].length-1 ;//Póngase en el rango
     }
   }
 }
