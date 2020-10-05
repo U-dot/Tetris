@@ -48,23 +48,20 @@ void draw() {
 }
 
 void newTablero(int[] A){
-  printBitwise(binary(tablero),ROWS+1,COLS+2);
+  print(binary(tablero),"\n",binary(A[A[pos-1]]),"\n");
   //Cambiar tablero con los nuevos valores
   char [] bTablero= binary(tablero).toCharArray();
-  print("h",bTablero[0]);
-  //tablero ROWS+1 x COLS+2
   int row=0, col=0, posTablero;
   //Matriz=tablero. A=Tetromino posición original
   for (int i = 0; i < 16; i++) {
     col=i%4;
     row=(i-col)/4;
     if (row+A[2]<0){continue;}
-    posTablero=(A[2]+row)*(COLS+2)+col+1;
+    posTablero=(A[2]+row)*(COLS+2)+col+3+A[1];
     if (( A[A[pos-1]] & (1 << 15 - i)) != 0) {
       bTablero[posTablero]='1';
     }
   }
-  print("a");
   tablero = unbinary(new String(bTablero));
   printBitwise(binary(tablero),ROWS+1,COLS+2);
 }
