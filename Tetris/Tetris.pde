@@ -37,6 +37,7 @@ void setup() {
   tablero= resetTablero(binary(tablero),ROWS,COLS);
   printBitwise(binary(tablero),ROWS+1,COLS+2);
   letraTetroList[0]=letraTetro;
+  drawTablero();
 }
 
 void draw() {
@@ -46,7 +47,26 @@ void draw() {
     fallTetrominoe(Tetrominoes[letraTetro]);
   }
 }
+void drawTablero(){
+  int rows = ROWS+2, cols=COLS+3;
+  push();
+  strokeWeight(5);
+  fill(255);
+  //Se encarga de pintar el cuadradito si se debe
+  for (int i = 0; i < rows*cols; i++) {
+    //value<<n value to shift n: number of places to shift
+    if ( ( tablero & (1 << rows*cols-1 - i) ) != 0) {
+      //& Compara bit por bit: si son iguales->1 si son diferentes ->0
+      rect( (i % 4)*width/rows,
+            i/4* height/cols,
+            width/rows,
+            height/cols);
+    }
+    fill(0);
+  }
+  pop();
 
+}
 void newTablero(int[] A){
   print(binary(tablero),"\n",binary(A[A[pos-1]]),"\n");
   //Cambiar tablero con los nuevos valores
