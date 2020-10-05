@@ -77,7 +77,7 @@ boolean collision(int[] A){
     col=i%4;
     row=(i-col)/4;
     if (row+A[2]<0){continue;}//Pos y A[2] Pos x A[1]
-    posTablero=(A[2]+row)*(COLS+2)+col+1;
+    posTablero=(A[2]+row)*(COLS+2)+col+A[1]+1;
     if (( A[A[pos-1]] & (1 << 15 - i)) != 0) {
       if ( ( tablero  & (1<< (ROWS+1)*(COLS+2)-1 - posTablero))  != 0){
         return false;
@@ -161,13 +161,21 @@ void keyPressed() {
       Tetrominoes[letraTetro][2]++;
     }else if (keyCode == RIGHT) {
       Tetrominoes[letraTetro][1]++;
+      if(collision(Tetrominoes[letraTetro])==false){
+        Tetrominoes[letraTetro][1]--;
+      }
     }else if (keyCode == LEFT) {
       Tetrominoes[letraTetro][1]--;
+      if(collision(Tetrominoes[letraTetro])==false){
+        Tetrominoes[letraTetro][1]++;
+      }
     }else if (keyCode == SHIFT){noLoop();
     }else if (keyCode == CONTROL){loop();}
     if (Tetrominoes[letraTetro][pos-1] < pos) {
       Tetrominoes[letraTetro][pos-1]=Tetrominoes[letraTetro].length-1 ;
-    }if(Tetrominoes[letraTetro][1]<-3){
+    }
+
+    if(Tetrominoes[letraTetro][1]<-3){
       Tetrominoes[letraTetro][1]=ROWS-1;
     }else if(ROWS-1<Tetrominoes[letraTetro][1]){
       Tetrominoes[letraTetro][1]=-3;
